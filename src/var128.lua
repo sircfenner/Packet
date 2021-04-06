@@ -17,11 +17,10 @@ local function decode(stream)
 	while not stream.eof() do
 		local b = stream.byte()
 		if b < 0x80 then
-			n += b * 128 ^ i
-			i += 1
+			n += b * 0x80 ^ i
 			break
 		end
-		n += (b - 128) * 128 ^ i
+		n += (b - 0x80) * 0x80 ^ i
 		i += 1
 	end
 	return n

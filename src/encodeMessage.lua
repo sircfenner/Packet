@@ -16,7 +16,7 @@ local function getValue(entry, value)
 	elseif entry.default ~= nil then
 		return Default
 	end
-	error("no value, no default")
+	error("no value, no default") -- todo: descriptive error referencing key
 end
 
 local encodeAny = nil
@@ -26,8 +26,12 @@ local function encodeUInt(value)
 end
 
 local function encodeInt(value)
-	local adjusted = bit32.bxor(bit32.lshift(value, 1), bit32.arshift(value, 31))
-	return encode128(adjusted)
+	if value < 0 then -- zigzag
+		value = -(2 * value + 1)
+	else
+		value = 2 * value
+	end
+	return encode128(value)
 end
 
 local function encodeFloat(value)

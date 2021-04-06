@@ -56,6 +56,7 @@ return {
 	Int = defaultable("int"),
 	UInt = defaultable("uint"),
 	Float = defaultable("float"),
+	Double = defaultable("double"),
 	Bool = defaultable("bool"),
 	Array = Array,
 	Message = Message,

@@ -39,7 +39,7 @@ They are comprised of simple key-value pairs, where keys are strings and values 
 | Bool    | Boolean value                               | Optional default value     | boolean                  |
 | Float   | IEEE 754 single-precision float             | Optional default value     | number                   |
 | Double  | IEEE 754 double-precision float             | Optional default value     | number                   |
-| Array   | Zero or more values of the specified type   | Value type from this table | table (array-like)       |
+| Array   | Zero or more values of the specified type   | Packet value type          | table (array-like)       |
 
 ### Optional defaults
 
@@ -105,10 +105,11 @@ return T.Message({
 ## Limitations
 
 Explanation of limitations here.
-- Varints
-- Maximum/minimum number values
+- Varint tradeoff
+- Integer value limits + Lua
 - Maximum number of optional values
 - No optional arrays/messages
+- No options without defaults
 
 ## Examples
 

@@ -10,12 +10,11 @@ end
 
 local function decodeInt(stream)
 	local n = decode128(stream)
-	local adjusted = bit32.bxor(bit32.rshift(n, 1), -bit32.band(n, 1))
-	local p = 2 ^ 31
-	if adjusted < p then
-		return adjusted % p
+	if n % 2 == 0 then -- zigzag
+		return n / 2
+	else
+		return -(n + 1) / 2
 	end
-	return adjusted - p * 2
 end
 
 local function decodeFloat(stream)
