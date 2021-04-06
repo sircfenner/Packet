@@ -1,0 +1,6 @@
+{
+	"name": "Packet",
+	"tree": {
+		"$path": "src"
+	}
+}

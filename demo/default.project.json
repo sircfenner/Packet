@@ -1,0 +1,27 @@
+{
+	"name": "PacketDemo",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"$path": "shared",
+			"Vendor": {
+				"$className": "Folder",
+				"Packet": {
+					"$path": "../src"
+				}
+			}
+		},
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
+			"$path": "server"
+		},
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+				"$path": "client"
+			}
+		}
+	}
+}
