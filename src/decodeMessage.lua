@@ -65,12 +65,14 @@ local function decodeMessage(message, input)
 		end
 	end
 
-	local defaultFlags = decode128(stream)
 	local isDefault = {}
-	for i = 1, numOptionalKeys do
-		local pow = numOptionalKeys - i
-		local flag = math.floor(defaultFlags / 2 ^ pow) % 2 == 1
-		isDefault[keys[i]] = flag
+	if numOptionalKeys > 0 then
+		local defaultFlags = decode128(stream)
+		for i = 1, numOptionalKeys do
+			local pow = numOptionalKeys - i
+			local flag = math.floor(defaultFlags / 2 ^ pow) % 2 == 1
+			isDefault[keys[i]] = flag
+		end
 	end
 
 	local out = {}

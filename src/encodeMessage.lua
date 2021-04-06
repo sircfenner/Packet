@@ -57,22 +57,35 @@ end
 local function encodeMessage(message, content)
 	local keys = stableKeys(message.data)
 
+	local defaultFlags = 0
+	local numOptionalKeys = 0
+	for _, key in ipairs(keys) do
+		local entry = message.data[key]
+		if entry.default ~= nil then
+			numOptionalKeys += 1
+		end
+	end
+
 	local outBody = {}
-	local outDefault = 0
 	for _, key in ipairs(keys) do
 		local entry = message.data[key]
 		local value = getValue(entry, content[key])
 		if entry.default ~= nil then
-			outDefault *= 2
+			defaultFlags *= 2
 		end
 		if value == Default then
-			outDefault += 1
+			defaultFlags += 1
 		else
 			table.insert(outBody, encodeAny(entry, value))
 		end
 	end
 
-	return encode128(outDefault) .. table.concat(outBody)
+	local pre = ""
+	if numOptionalKeys > 0 then
+		pre = encode128(defaultFlags)
+	end
+
+	return pre .. table.concat(outBody)
 end
 
 function encodeAny(entry, value)
