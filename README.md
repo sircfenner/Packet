@@ -129,24 +129,24 @@ As the Message structure is already known to the sender and recipient, the packe
 
 ## File structure
 
-If a Message defines any optional fields, the packed data will begin with varint-encoded bitflags indicating whether each optional key in the input data the default value. If no optional fields are defined in the Message, the packed data will begin immediately.
+If a Message defines any optional fields, the packed data will begin with varint-encoded bitflags indicating whether each optional key in the input data is set to the default value. If no optional fields are defined in the Message, the packed data will begin immediately.
 
-This means that Messages which do not define any optional fields will never encode any extra data. Messages which do define optional fields will contain `ceil(num_optional_fields / 7)` extra bytes at the start of the packed data, which generally amounts to only one or two bytes.
+This means that Messages which do not define any optional fields will not encode any extra data. Messages which do define optional fields will contain `ceil(num_optional_fields / 7)` extra bytes at the start of the packed data, which generally amounts to only one or two bytes.
 
-As the shape of the data and default values for optional fields is known to the recipient, the binary encoding does not need to pack default values. Where a value in the input data is equal to the default value for that field, it is treated as if it was not present and the usual behavior for default values occurs.
+As the shape of the data and default values for optional fields is known to the recipient, the binary encoding does not need to pack default values. Where a value in the input data is equal to the default value for that field, it is treated as if it was not present and the usual rules for default values are applied.
 
 ## Data types
 
-| Type    | Encoding                                    |
-|---------|---------------------------------------------|
-| Message | (values)                                    |
-| String  | Varint length, followed by the string       |
-| UInt    | Varint                                      |
-| Int     | Varint, zigzag encoded                      |
-| Bool    | Byte                                        |
-| Float   | 4 Bytes (IEEE 754 binary32)                 |
-| Double  | 8 Bytes (IEEE 754 binary64)                 |
-| Array   | Varint number of values, followed by values |
+| Type    | Encoding                                        |
+|---------|-------------------------------------------------|
+| Message | (values)                                        |
+| String  | Varint length, followed by the string           |
+| UInt    | Varint                                          |
+| Int     | Varint, zigzag encoded                          |
+| Bool    | Byte                                            |
+| Float   | 4 Bytes (IEEE 754 binary32)                     |
+| Double  | 8 Bytes (IEEE 754 binary64)                     |
+| Array   | Varint number of values, followed by the values |
 
 ### Varints
 
