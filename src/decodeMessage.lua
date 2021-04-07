@@ -13,7 +13,7 @@ local function decodeInt(stream)
 	if n % 2 == 0 then -- zigzag
 		return n / 2
 	else
-		return -(n + 1) / 2
+		return (1 - n) / 2
 	end
 end
 

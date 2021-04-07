@@ -27,9 +27,9 @@ end
 
 local function encodeInt(value)
 	if value < 0 then -- zigzag
-		value = -(2 * value + 1)
+		value = value * -2 + 1
 	else
-		value = 2 * value
+		value = value * 2
 	end
 	return encode128(value)
 end
