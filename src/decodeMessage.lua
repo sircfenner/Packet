@@ -1,5 +1,6 @@
 local Stream = require(script.Parent.Stream)
 local stableKeys = require(script.Parent.stableKeys)
+local sizeOf = require(script.Parent.sizeOf)
 local decode128 = require(script.Parent.var128).decode
 
 local decodeAny
@@ -49,6 +50,15 @@ local function decodeArray(entry, stream)
 	return out
 end
 
+local function decodeFlags(stream, size)
+	local n = 0
+	for _ = 1, size do
+		n *= 0x100
+		n += stream.byte()
+	end
+	return n
+end
+
 local function decodeMessage(message, input)
 	local keys = stableKeys(message.data)
 	local stream = input
@@ -66,10 +76,10 @@ local function decodeMessage(message, input)
 
 	local isDefault = {}
 	if numOptionalKeys > 0 then
-		local defaultFlags = decode128(stream)
+		local defaultFlags = decodeFlags(stream, sizeOf(2 ^ numOptionalKeys - 1))
 		for i = 1, numOptionalKeys do
-			local pow = numOptionalKeys - i
-			local flag = math.floor(defaultFlags / 2 ^ pow) % 2 == 1
+			local sh = numOptionalKeys - i
+			local flag = math.floor(defaultFlags / 2 ^ sh) % 2 == 1
 			isDefault[keys[i]] = flag
 		end
 	end

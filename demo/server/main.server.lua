@@ -4,20 +4,22 @@ local hexDump = require(RepStore.hexDump)
 local Packet = require(RepStore.Vendor.Packet)
 local T = Packet.Type
 
-local Test = T.Message({
+local Player = T.Message({
+	id = T.UInt,
 	name = T.String,
-	age = T.UInt,
 	alive = T.Bool(true),
+	friends = T.Array(T.String),
 })
 
-local packed = Test.encode({
+local packed = Player.encode({
+	id = 5,
 	name = "foo",
-	age = 41,
+	friends = { "bar", "baz" },
 })
+
+local unpacked = Player.decode(packed)
 
 print(string.format("packed %i bytes", #packed))
 print(hexDump(packed))
-
-local unpacked = Test.decode(packed)
 
 print("unpacked data:", unpacked)

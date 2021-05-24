@@ -119,9 +119,11 @@ Lua's representation of numbers also means that integers are limited to certain 
 
 While optional/default values are encoded very concisely, every optional field must have a default value. This means that it is not possible to define a Message such that a recipient of data could determine if certain data was intentionally omitted.
 
-Arrays must only contain values of the same type and cannot be optional (nor can Messages). The maximum number of optional fields that can be defined in a single Message (not including nested Messages) is 52.
+Arrays must only contain values of the same type and cannot be optional (nor can Messages). The maximum number of optional fields that can be defined in a single Message (not including nested Messages) is 32.
 
 Owing to the definition syntax, a Message cannot contain a recursive definition, for example a `User` Message that has a `friends` field containing an array of `User` Messages. 
+
+String support is basic: no UTF-8.
 
 # Binary format
 
@@ -129,9 +131,9 @@ As the Message structure is already known to the sender and recipient, the packe
 
 ## File structure
 
-If a Message defines any optional fields, the packed data will begin with varint-encoded bitflags indicating whether each optional key in the input data is set to the default value. If no optional fields are defined in the Message, the packed data will begin immediately.
+If a Message defines any optional fields, the packed data will begin with bitflags indicating whether each optional key in the input data is set to the default value. If no optional fields are defined in the Message, the packed data will begin immediately.
 
-This means that Messages which do not define any optional fields will not encode any extra data. Messages which do define optional fields will contain `ceil(num_optional_fields / 7)` extra bytes at the start of the packed data, which generally amounts to only one or two bytes.
+This means that Messages which do not define any optional fields will not encode any extra data. Messages which do define optional fields will contain a few extra bytes at the start of the packed data to indicate whether default values should be used.
 
 As the shape of the data and default values for optional fields is known to the recipient, the binary encoding does not need to pack default values. Where a value in the input data is equal to the default value for that field, it is treated as if it was not present and the usual rules for default values are applied.
 
@@ -155,3 +157,22 @@ The binary format uses [variable-length integer encoding](https://developers.goo
 ### Zigzag encoding
 
 For signed integers, a [zigzag encoding](https://en.wikipedia.org/wiki/Variable-length_quantity#Zigzag_encoding) is applied to map every number to a positive integer before encoding as a varint. This prevents negative numbers taking up a disproportionate amount of space and is more straightforward to implement than including a sign bit in varint encoding.
+
+## Example
+
+Encoding the sample data for the `Player` message above will generate the following 15 bytes of data:
+```
+01 02 03 62 61 72 03 62 61 7a 05 03 66 6f 6f
+```
+
+The first `01` byte indicates that the one default field (`alive`) is set to its default value.
+
+The following bytes encode the `friends`, `id`, and `name` fields in that order.
+
+`02`: length of array (friends field)
+- `03 62 61 72`: length 3, then "bar"
+- `03 62 61 7a`: length 3, then "baz"
+
+`05`: number 5 (id field)
+
+`03 66 6f 6f`: length 3, then "foo" (name field)

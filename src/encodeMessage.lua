@@ -1,4 +1,5 @@
 local stableKeys = require(script.Parent.stableKeys)
+local sizeOf = require(script.Parent.sizeOf)
 local encode128 = require(script.Parent.var128).encode
 
 local Default = newproxy(true)
@@ -58,6 +59,16 @@ local function encodeArray(entry, value)
 	return encode128(#value) .. table.concat(out)
 end
 
+local function encodeFlags(flags)
+	local out = {}
+	local size = sizeOf(flags)
+	for i = 1, size do
+		local sh = 8 * (size - i)
+		out[i] = math.floor(flags / 2 ^ sh) % 0x100
+	end
+	return string.char(unpack(out))
+end
+
 local function encodeMessage(message, content)
 	local keys = stableKeys(message.data)
 
@@ -86,7 +97,7 @@ local function encodeMessage(message, content)
 
 	local pre = ""
 	if numOptionalKeys > 0 then
-		pre = encode128(defaultFlags)
+		pre = encodeFlags(defaultFlags)
 	end
 
 	return pre .. table.concat(outBody)
